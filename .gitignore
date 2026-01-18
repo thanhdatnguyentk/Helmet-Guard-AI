@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Project Specific
+uploads/
+static/results/
+history.json
+data/
+datasets/
+helmet_only_dataset/
+merged_81class_dataset/
+merged_82class_dataset/
+runs/
+archive.zip
+
+# Model Weights
+*.pt
+
+# IDEs
+.vscode/
+.idea/
+.ipynb_checkpoints/

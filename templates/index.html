@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helmet Guard AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <header>
+            <h1>Helmet Guard AI</h1>
+            <p class="subtitle" style="color: rgba(255,255,255,0.6); margin-top: 5px;">AI-Powered Traffic Safety
+                Enforcement</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Side: Main Working Area -->
+            <section class="glass-card">
+                <div id="uploadPartition" class="upload-section">
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fa-solid fa-file-video"
+                            style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                        <p>Drag and drop or click to select video</p>
+                        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 10px;">Offline analysis
+                            for maximum frame rate</p>
+                        <input type="file" id="fileInput" accept="video/*">
+                    </div>
+
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p id="statusText"
+                        style="margin-top: 10px; display: none; color: var(--primary); font-weight: 600;">Processing: 0%
+                    </p>
+
+                    <button class="btn btn-primary" id="uploadBtn" style="margin-top: 20px;">Start Analysis</button>
+                </div>
+
+                <div id="resultPartition" class="result-section">
+                    <div class="video-container">
+                        <video id="resultVideo" controls autoplay loop>
+                            <source src="" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="stats-panel">
+                        <div class="stat-item">
+                            <span class="stat-value" id="violatorCount">0</span>
+                            <span class="stat-label">Violations</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="helmetCount">0</span>
+                            <span class="stat-label"> Safe Riders</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" style="color: var(--secondary);">High</span>
+                            <span class="stat-label">Playback Performance</span>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="window.location.reload()">Analyze New Video</button>
+                        <button class="download-btn" id="downloadBtn" style="display:none;">
+                            <i class="fa-solid fa-download"></i> Download Video (.mp4)
+                        </button>
+                    </div>
+
+                    <!-- Violator Gallery -->
+                    <div id="violatorGallery" class="violator-gallery"
+                        style="display:none; margin-top: 2rem; width: 100%;">
+                        <div class="gallery-title"
+                            style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; color: #ff4d4d; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-camera"></i>
+                            Violator Snapshots
+                        </div>
+                        <div class="gallery-grid" id="galleryGrid">
+                            <!-- Crops will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Side: History Sidebar -->
+            <aside class="glass-card history-sidebar">
+                <div class="history-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Analysis History
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- Items will be injected by JS -->
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
