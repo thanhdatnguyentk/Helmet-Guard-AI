@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from ultralytics import YOLO
 from tqdm import tqdm
 import random
+import argparse
 
 def convert_box(size, box):
     dw = 1. / size[0]
@@ -19,7 +20,7 @@ def prepare_dataset():
     ann_dir = "data/annotations"
     output_base = "helmet_only_dataset"
     
-    # Classes: 0: Without Helmet, 1: With Helmet (Matches existing yaml)
+    # Classes: 0: Without Helmet, 1: With Helmet
     label_map = {"no_helmet": 0, "helmet": 1, "with helmet": 1, "without helmet": 0}
     
     for split in ["train", "val"]:
@@ -80,25 +81,40 @@ names:
     print("Dataset preparation complete.")
 
 def main():
-    if not os.path.exists("helmet_only_dataset"):
-        prepare_dataset()
+    parser = argparse.ArgumentParser(description="Train or Resume Helmet Detection Model")
+    parser.add_argument("--resume", action="store_true", help="Resume training from the last checkpoint")
+    args = parser.parse_args()
+
+    checkpoint_path = "runs/detect/helmet_only_model_x/weights/last.pt"
+
+    if args.resume:
+        if not os.path.exists(checkpoint_path):
+            print(f"Error: Checkpoint not found at {checkpoint_path}")
+            return
+        print(f"Resuming training from {checkpoint_path}...")
+        model = YOLO(checkpoint_path)
+        model.train(resume=True)
+    else:
+        if not os.path.exists("helmet_only_dataset"):
+            prepare_dataset()
+            
+        print("Starting new training session...")
+        model = YOLO("yolo26x.pt")
+        model.train(
+            data="helmet_only.yaml",
+            epochs=30,
+            imgsz=640,
+            batch=4,
+            name="helmet_only_model_x",
+            device=0,
+            workers=0
+        )
         
-    model = YOLO("yolo26x.pt") # Use small model for helmet pre-training
-    model.train(
-        data="helmet_only.yaml",
-        epochs=30,
-        imgsz=640,
-        batch=4,
-        name="helmet_only_model_x",
-        device=0,
-        workers=0
-    )
-    
-    # Save the best model to root for Stage 2
-    best_path = "runs/detect/helmet_only_model/weights/best.pt"
-    if os.path.exists(best_path):
-        shutil.copy(best_path, "helmet_model_best.pt")
-        print("Helmet model training complete. Best model saved as 'helmet_model_best.pt'")
+        # Save the best model to root for Stage 2
+        best_path = "runs/detect/helmet_only_model_x/weights/best.pt"
+        if os.path.exists(best_path):
+            shutil.copy(best_path, "helmet_model_best.pt")
+            print("Training complete. Best model saved as 'helmet_model_best.pt'")
 
 if __name__ == "__main__":
     main()
